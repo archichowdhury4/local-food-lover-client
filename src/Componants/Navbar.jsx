@@ -7,14 +7,13 @@ import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, logOut } = use(AuthContext);
+  const { user, signOutUser } = use(AuthContext);
 
-  const handleLogout = () => {
-    logOut()
-      .then(() => console.log("Logged out"))
-      .catch((err) => console.error(err));
-  };
-
+ const handleSignOut = () => {
+        signOutUser()
+            .then()
+            .catch()
+    }
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
@@ -27,8 +26,12 @@ const Navbar = () => {
         <ul className="hidden md:flex space-x-6 font-medium">
           <li><Link to="/" className="hover:text-orange-500"> Home</Link></li>
           <li><Link to="/explore" className="hover:text-orange-500"> Explore</Link></li>
-          <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>
+          {
+            user && <>
+            <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>
           <li><Link to="/foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
+            </>
+          }
           <li><Link to="/about" className="hover:text-orange-500"> Contact / About</Link></li>
         </ul>
 
@@ -45,7 +48,7 @@ const Navbar = () => {
       <Link to="/add-review" className="block px-4 py-2 hover:bg-orange-50">Add Review</Link>
       <Link to="/my-reviews" className="block px-4 py-2 hover:bg-orange-50">My Reviews</Link>
       <button
-        onClick={handleLogout}
+        onClick={handleSignOut}
         className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
       >
          Logout
@@ -85,8 +88,12 @@ const Navbar = () => {
         <ul className="md:hidden bg-white shadow-md flex flex-col items-center space-y-4 py-4 font-medium">
           <Link to="/" onClick={() => setMenuOpen(false)}> Home</Link>
           <Link to="/explore" onClick={() => setMenuOpen(false)}> Explore</Link>
-          <Link to="/restaurants" onClick={() => setMenuOpen(false)}> Restaurants</Link>
-          <Link to="/foodies" onClick={() => setMenuOpen(false)}> Top Foodies</Link>
+          {
+            user && <>
+            <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>
+          <li><Link to="/foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
+            </>
+          }
           <Link to="/about" onClick={() => setMenuOpen(false)}> Contact / About</Link>
           {user ? (
   <>
@@ -98,7 +105,7 @@ const Navbar = () => {
     </Link>
     <button
       onClick={() => {
-        handleLogout();
+        handleSignOut();
         setMenuOpen(false);
       }}
       className="text-red-600"
