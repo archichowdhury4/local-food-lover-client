@@ -4,18 +4,30 @@ import './index.css'
 
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
+import RootLayout from './Layout/RootLayout';
+import Home from './Componants/Home';
+import AuthProvider from './context/AuthProvider';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello World</div>,
+    Component: RootLayout,
+    children:
+    [
+      {
+        index: true,
+        Component: Home
+      },
+    ]
   },
 ]);
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />,
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )
