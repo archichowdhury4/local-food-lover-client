@@ -34,37 +34,41 @@ const Navbar = () => {
 
         {/* User / Login */}
         <div className="relative">
-          {user ? (
-            <div className="group inline-block">
-              <img
-                src={user.photoURL || "https://i.ibb.co/0yP2NQy/default-user.png"}
-                alt="User"
-                className="w-10 h-10 rounded-full cursor-pointer border-2 border-orange-400"
-              />
-              {/* Dropdown */}
-              <div className="absolute right-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 w-40">
-                <Link to="/add-review" className="block px-4 py-2 hover:bg-orange-50">
-                   Add Review
-                </Link>
-                <Link to="/my-reviews" className="block px-4 py-2 hover:bg-orange-50">
-                   My Reviews
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 flex items-center gap-2"
-            >
-              <FaUser /> Login / Register
-            </Link>
-          )}
+         {user ? (
+  <div className="group inline-block">
+    <img
+      src={user.photoURL || "https://i.ibb.co/0yP2NQy/default-user.png"}
+      alt="User"
+      className="w-10 h-10 rounded-full cursor-pointer border-2 border-orange-400"
+    />
+    <div className="absolute right-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 w-40">
+      <Link to="/add-review" className="block px-4 py-2 hover:bg-orange-50">Add Review</Link>
+      <Link to="/my-reviews" className="block px-4 py-2 hover:bg-orange-50">My Reviews</Link>
+      <button
+        onClick={handleLogout}
+        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+      >
+         Logout
+      </button>
+    </div>
+  </div>
+) : (
+  <div className="flex gap-2">
+    <Link
+      to="/login"
+      className="bg-orange-500 text-white px-3 py-2 rounded-lg hover:bg-orange-600 flex items-center gap-2"
+    >
+      <FaUser /> Login
+    </Link>
+    <Link
+      to="/register"
+      className="border border-orange-500 text-orange-600 px-3 py-2 rounded-lg hover:bg-orange-50 flex items-center gap-2"
+    >
+       Register
+    </Link>
+  </div>
+)}
+
         </div>
 
         {/* Mobile Menu Button */}
@@ -85,28 +89,42 @@ const Navbar = () => {
           <Link to="/foodies" onClick={() => setMenuOpen(false)}> Top Foodies</Link>
           <Link to="/about" onClick={() => setMenuOpen(false)}> Contact / About</Link>
           {user ? (
-            <>
-              <Link to="/add-review" onClick={() => setMenuOpen(false)}> Add Review</Link>
-              <Link to="/my-reviews" onClick={() => setMenuOpen(false)}> My Reviews</Link>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="text-red-600"
-              >
-                🚪 Logout
-              </button>
-            </>
-          ) : (
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
-            >
-              <FaUser /> Login / Register
-            </Link>
-          )}
+  <>
+    <Link to="/add-review" onClick={() => setMenuOpen(false)}>
+       Add Review
+    </Link>
+    <Link to="/my-reviews" onClick={() => setMenuOpen(false)}>
+       My Reviews
+    </Link>
+    <button
+      onClick={() => {
+        handleLogout();
+        setMenuOpen(false);
+      }}
+      className="text-red-600"
+    >
+       Logout
+    </button>
+  </>
+) : (
+  <div className="flex flex-col gap-2 items-center">
+    <Link
+      to="/login"
+      onClick={() => setMenuOpen(false)}
+      className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 flex items-center gap-2 w-40 justify-center"
+    >
+      <FaUser /> Login
+    </Link>
+    <Link
+      to="/register"
+      onClick={() => setMenuOpen(false)}
+      className="border border-orange-500 text-orange-600 px-4 py-2 rounded-lg hover:bg-orange-50 flex items-center gap-2 w-40 justify-center"
+    >
+       Register
+    </Link>
+  </div>
+)}
+
         </ul>
       )}
     </nav>
