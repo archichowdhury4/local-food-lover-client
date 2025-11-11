@@ -11,7 +11,7 @@ const Login = () => {
   const [error, setError] = useState("");
    const [showPassword, setShowPassword] = useState(false);
    const emailRef = useRef();
-  const { signIn, SignInWithGoogle } = use(AuthContext);
+  const { signIn, signInWithGoogle } = use(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const handleLogin = (e) => {
@@ -50,17 +50,16 @@ const Login = () => {
     event.preventDefault();
     setShowPassword(!showPassword)
   }
-  const handleGoogleSignIn = () => {
-    SignInWithGoogle()
-    .then ( result => {
-      console.log(result.user)
+ const handleGoogleSignIn = () => {
+        signInWithGoogle()
+            .then(result => {
+                console.log(result.user);
       navigate(location?.state || '/')
     })
     .catch(error => {
-      console.log(error)
-    })
-  }
- 
+                console.log(error)
+            })
+          }
   return (
     <div className="flex justify-center min-h-screen items-center">
       <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl py-5">
