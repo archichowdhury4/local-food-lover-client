@@ -11,6 +11,7 @@ import Register from './Componants/Register';
 import Login from './Componants/Login';
 import ReviewDetails from './Componants/ReviewDetails';
 import AllReviews from './Componants/AllReviews';
+import Error404 from './Componants/Error404';
 
 
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "reviews",
         Component: AllReviews
+      },
+      {
+        path: "*",
+        Component: Error404
       }
     ]
   },

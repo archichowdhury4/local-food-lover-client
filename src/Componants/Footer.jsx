@@ -1,7 +1,11 @@
+import { use } from "react";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 
 const Footer = () => {
+  const {user} = use(AuthContext)
+  const navigate = useNavigate();
   return (
     <footer className="bg-gray-900 text-gray-300 py-8 mt-20">
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-8">
@@ -26,7 +30,13 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li><Link to="/" className="hover:text-orange-500">Home</Link></li>
             <li><Link to="/explore" className="hover:text-orange-500">Explore</Link></li>
-            <li><Link to="/restaurants" className="hover:text-orange-500">Restaurants</Link></li>
+            <li><Link to="/reviews" onClick={() => {
+      if (user) {
+        navigate("/reviews");
+      } else {
+        navigate("/login");
+      }
+    }} className="hover:text-orange-500">All Reviews</Link></li>
             <li><Link to="/about" className="hover:text-orange-500">Contact / About</Link></li>
           </ul>
         </div>
