@@ -77,27 +77,28 @@ const Register = () => {
     setPasswordError("");
 
     // Create user
-    createUser(email, password)
-      .then((result) => {
-        const user = result.user;
+  createUser(email, password)
+    .then((result) => {
+      const user = result.user;
 
-        updateUser({ displayName: name, photoURL: photo })
-          .then(() => {
-            setUser({ ...user, displayName: name, photoURL: photo });
-            navigate("/");
-
-          })
-          .catch((error) => {
-            console.log(error);
-            setUser(user);
-            toast("User created but profile not updated!");
-          });
-      })
-      .catch((error) => {
-        console.log(error.code);
-        toast.error(error.code);
-      });
-  };
+      // Update profile
+      updateUser({ displayName: name, photoURL: photo })
+        .then(() => {
+          setUser({ ...user, displayName: name, photoURL: photo });
+          navigate("/"); // ✅ শুধু Home page এ চলে যাবে
+        })
+        .catch((error) => {
+          console.log(error);
+          setUser(user);
+          toast("User created but profile not updated!");
+          navigate("/"); // ✅ যদি profile update fail হয় তবুও Home page এ যাবে
+        });
+    })
+    .catch((error) => {
+      console.log(error.code);
+      toast.error(error.code);
+    });
+};
 
   const handleTogglePasswordShow = (event) => {
     event.preventDefault();

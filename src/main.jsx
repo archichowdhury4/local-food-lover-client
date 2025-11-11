@@ -9,6 +9,8 @@ import Home from './Componants/Home';
 import AuthProvider from './context/AuthProvider';
 import Register from './Componants/Register';
 import Login from './Componants/Login';
+import ReviewDetails from './Componants/ReviewDetails';
+import AllReviews from './Componants/AllReviews';
 
 
 const router = createBrowserRouter([
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "login",
         Component: Login
+      },
+      {
+        path: "reviews/:id",  
+        Component: ReviewDetails
+      },
+      {
+        path: "reviews",
+        Component: AllReviews
       }
     ]
   },

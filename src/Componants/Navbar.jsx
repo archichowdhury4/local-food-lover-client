@@ -2,16 +2,18 @@ import { useState, use } from "react";
 
 import { FaBars, FaTimes, FaUser } from "react-icons/fa";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, signOutUser } = use(AuthContext);
-
+  const navigate = useNavigate()
  const handleSignOut = () => {
         signOutUser()
-            .then()
+            .then(() => {
+              navigate("/"); 
+            })
             .catch()
     }
   return (
@@ -28,7 +30,7 @@ const Navbar = () => {
           <li><Link to="/explore" className="hover:text-orange-500"> Explore</Link></li>
           {
             user && <>
-            <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>
+            <li><Link to="/reviews" className="hover:text-orange-500"> All Reviews</Link></li>
           <li><Link to="/foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
             </>
           }

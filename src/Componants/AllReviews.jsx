@@ -4,30 +4,27 @@ import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 
-const TopRatedReviews = () => {
+const AllReviews = () => {
   const [reviews, setReviews] = useState([]);
-  const { user } = useContext(AuthContext); // user check
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/top-reviews")
+    fetch("http://localhost:3000/reviews") 
       .then((res) => res.json())
       .then((data) => setReviews(data))
       .catch((err) => console.error(err));
   }, []);
 
   const handleViewDetails = (id) => {
-    if (user) {
-      navigate(`/reviews/${id}`);
-    } else {
-      navigate("/login");
-    }
+    if (user) navigate(`/reviews/${id}`);
+    else navigate("/login");
   };
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-16">
       <h2 className="text-3xl font-bold text-center mb-8 text-orange-600">
-        Featured Reviews
+        All Reviews
       </h2>
 
       <div className="grid md:grid-cols-3 gap-8">
@@ -64,24 +61,8 @@ const TopRatedReviews = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Show All Button */}
-      <div className="text-center mt-10">
-        <button
-          onClick={() => {
-      if (user) {
-        navigate("/reviews");
-      } else {
-        navigate("/login");
-      }
-    }}
-          className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-        >
-          Show All Reviews
-        </button>
-      </div>
     </section>
   );
 };
 
-export default TopRatedReviews;
+export default AllReviews;
