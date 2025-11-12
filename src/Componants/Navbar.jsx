@@ -27,7 +27,6 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6 font-medium">
           <li><Link to="/" className="hover:text-orange-500"> Home</Link></li>
-          <li><Link to="/explore" className="hover:text-orange-500"> Explore</Link></li>
           {
             user && <>
             <li><Link to="/reviews" className="hover:text-orange-500"> All Reviews</Link></li>
@@ -89,7 +88,7 @@ const Navbar = () => {
       {menuOpen && (
         <ul className="md:hidden bg-white shadow-md flex flex-col items-center space-y-4 py-4 font-medium">
           <Link to="/" onClick={() => setMenuOpen(false)}> Home</Link>
-          <Link to="/explore" onClick={() => setMenuOpen(false)}> Explore</Link>
+
           {
             user && <>
             <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>

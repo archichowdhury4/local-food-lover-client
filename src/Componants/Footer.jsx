@@ -30,7 +30,6 @@ const Footer = () => {
           <h3 className="text-white text-lg font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li><Link to="/" className="hover:text-orange-500">Home</Link></li>
-            <li><Link to="/explore" className="hover:text-orange-500">Explore</Link></li>
             <li><Link to="/reviews" onClick={() => {
       if (user) {
         navigate("/reviews");

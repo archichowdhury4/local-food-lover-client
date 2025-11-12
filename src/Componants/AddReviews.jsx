@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 const AddReview = () => {
   const { user } = useContext(AuthContext);
@@ -40,9 +41,15 @@ const AddReview = () => {
 
       const data = await res.json();
       if (data.insertedId) {
-        toast.success("Review added successfully!");
+        Swal.fire({
+  position: "top-end",
+  icon: "success",
+  title: "Your form has been submitted",
+  showConfirmButton: false,
+  timer: 1500
+});
         form.reset();
-        navigate("/reviews");
+        navigate("/my-reviews");
       } else {
         toast.error("Failed to add review. Try again!");
       }

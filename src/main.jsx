@@ -14,6 +14,9 @@ import AllReviews from './Componants/AllReviews';
 import Error404 from './Componants/Error404';
 import AddReview from './Componants/AddReviews';
 import AboutContact from './Componants/AboutContact';
+import TopFoodies from './Componants/TopFoodies';
+import MyReviews from './Componants/MyReviews';
+import EditReview from './Componants/EditReview';
 
 
 const router = createBrowserRouter([
@@ -54,7 +57,21 @@ const router = createBrowserRouter([
        path: "about",
        Component: AboutContact
 
-      }
+      },
+      {
+        path: "foodies",
+        Component: TopFoodies
+      },
+      {
+        path: "my-reviews",
+        Component: MyReviews,
+      },
+      {
+      path: "edit-review/:id",
+      Component: EditReview,
+      },
+
+      
 
     ]
   },

@@ -1,12 +1,11 @@
-
-import img1 from "../../public/assets/65d2fbcc303531708325836.jpg"
-import img2 from "../../public/assets/0.jpg"
-import img3 from "../../public/assets/istockphoto-1135530884-612x612.jpg"
-import { useState, useEffect } from "react";
-import { Link } from "react-router";
+import img1 from "../../public/assets/65d2fbcc303531708325836.jpg";
+import img2 from "../../public/assets/0.jpg";
+import img3 from "../../public/assets/istockphoto-1135530884-612x612.jpg";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { AuthContext } from "../context/AuthContext"; // ✅ import AuthContext
 
-// Slider Data
 const slides = [
   {
     id: 1,
@@ -14,7 +13,7 @@ const slides = [
     title: "Discover Local Flavors",
     text: "Explore and share your favorite street food and hidden gems around you.",
     button: "Explore Now",
-    link: "/explore",
+    link: "/reviews",
   },
   {
     id: 2,
@@ -36,7 +35,8 @@ const slides = [
 
 const Hero = () => {
   const [current, setCurrent] = useState(0);
-
+  const { user } = useContext(AuthContext); // ✅ get user info
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -45,6 +45,13 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const handleButtonClick = (link) => {
+    if (!user) {
+      navigate("/login"); // ✅ if not logged in → go to login
+    } else {
+      navigate(link); // ✅ if logged in → go to intended page
+    }
+  };
 
   const variants = {
     enter: { opacity: 0, scale: 1.05 },
@@ -90,18 +97,17 @@ const Hero = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
-              <Link
-                to={slides[current].link}
+              <button
+                onClick={() => handleButtonClick(slides[current].link)}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
               >
                 {slides[current].button}
-              </Link>
+              </button>
             </motion.div>
           </div>
         </motion.div>
       </AnimatePresence>
 
-    
       <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2">
         {slides.map((_, index) => (
           <button
