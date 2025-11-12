@@ -59,7 +59,7 @@ const router = createBrowserRouter([
 
       },
       {
-        path: "foodies",
+        path: "top-foodies",
         Component: TopFoodies
       },
       {

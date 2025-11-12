@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 const AllReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("date"); // default sort by date
+  const [sort, setSort] = useState("date"); 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const AllReviews = () => {
     else navigate("/login");
   };
 
-  // 🔍 Filter & Sort Reviews
+  
   const filteredReviews = reviews
     .filter(
       (r) =>
@@ -44,7 +44,7 @@ const AllReviews = () => {
           All Reviews
         </h2>
 
-        {/* Search & Sort Controls */}
+    
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <input
             type="text"

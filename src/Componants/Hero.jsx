@@ -4,7 +4,7 @@ import img3 from "../../public/assets/istockphoto-1135530884-612x612.jpg";
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { AuthContext } from "../context/AuthContext"; // ✅ import AuthContext
+import { AuthContext } from "../context/AuthContext"; 
 
 const slides = [
   {
@@ -35,7 +35,7 @@ const slides = [
 
 const Hero = () => {
   const [current, setCurrent] = useState(0);
-  const { user } = useContext(AuthContext); // ✅ get user info
+  const { user } = useContext(AuthContext); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,9 +47,9 @@ const Hero = () => {
 
   const handleButtonClick = (link) => {
     if (!user) {
-      navigate("/login"); // ✅ if not logged in → go to login
+      navigate("/login"); 
     } else {
-      navigate(link); // ✅ if logged in → go to intended page
+      navigate(link); 
     }
   };
 

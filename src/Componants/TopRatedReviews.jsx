@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const TopRatedReviews = () => {
   const [reviews, setReviews] = useState([]);
-  const { user } = useContext(AuthContext); // user check
+  const { user } = useContext(AuthContext); 
   const navigate = useNavigate();
 
   useEffect(() => {

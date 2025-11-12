@@ -40,7 +40,7 @@ const ReviewDetails = () => {
 
       <p className="text-gray-800 mb-6">{review.reviewText}</p>
 
-      {/* Date moved to bottom */}
+    
       <p className="text-xs text-gray-400 text-right mt-8">
         Posted on: {new Date(review.date).toLocaleDateString()}
       </p>

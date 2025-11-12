@@ -30,7 +30,7 @@ const Navbar = () => {
           {
             user && <>
             <li><Link to="/reviews" className="hover:text-orange-500"> All Reviews</Link></li>
-          <li><Link to="/foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
+          <li><Link to="/top-foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
             </>
           }
           <li><Link to="/about" className="hover:text-orange-500"> Contact / About</Link></li>
@@ -92,7 +92,7 @@ const Navbar = () => {
           {
             user && <>
             <li><Link to="/restaurants" className="hover:text-orange-500"> Restaurants</Link></li>
-          <li><Link to="/foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
+          <li><Link to="/top-foodies" className="hover:text-orange-500"> Top Foodies</Link></li>
             </>
           }
           <Link to="/about" onClick={() => setMenuOpen(false)}> Contact / About</Link>
