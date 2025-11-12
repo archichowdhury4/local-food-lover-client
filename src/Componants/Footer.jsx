@@ -2,6 +2,7 @@ import { use } from "react";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
+import { FaX } from "react-icons/fa6";
 
 const Footer = () => {
   const {user} = use(AuthContext)
@@ -45,10 +46,10 @@ const Footer = () => {
         <div>
           <h3 className="text-white text-lg font-semibold mb-3">Follow Us</h3>
           <div className="flex gap-4 text-xl">
-            <a href="#" className="hover:text-orange-500"><FaFacebook /></a>
-            <a href="#" className="hover:text-orange-500"><FaInstagram /></a>
-            <a href="#" className="hover:text-orange-500"><FaTwitter /></a>
-            <a href="#" className="hover:text-orange-500"><FaYoutube /></a>
+            <a href="https://www.facebook.com/" className="hover:text-orange-500"><FaFacebook /></a>
+            <a href="https://www.instagram.com/accounts/login/?hl=en" className="hover:text-orange-500"><FaInstagram /></a>
+            <a href="https://x.com/i/flow/login?lang=en" className="hover:text-orange-500"><FaX/></a>
+            <a href="https://www.youtube.com/" className="hover:text-orange-500"><FaYoutube /></a>
           </div>
           <p className="text-sm text-gray-400 mt-3">
             © {new Date().getFullYear()} Local Food Lovers. All rights reserved.

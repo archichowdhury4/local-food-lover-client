@@ -8,9 +8,9 @@ const AddReview = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Protected check
+  
   if (!user) {
-    navigate("/login"); // user না থাকলে login page এ redirect
+    navigate("/login"); 
     return null;
   }
 
@@ -27,7 +27,7 @@ const AddReview = () => {
       rating: parseFloat(form.rating.value),
       reviewText: form.reviewText.value,
       email: user.email, 
-      reviewerName: user.displayName || "Anonymous", // <-- ইউজারের নাম
+      reviewerName: user.displayName,
       date: new Date().toISOString(), 
     };
 

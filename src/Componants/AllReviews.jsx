@@ -10,7 +10,7 @@ const AllReviews = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/reviews") 
+    fetch("http://localhost:3000/reviews")
       .then((res) => res.json())
       .then((data) => setReviews(data))
       .catch((err) => console.error(err));
@@ -27,40 +27,66 @@ const AllReviews = () => {
         All Reviews
       </h2>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {reviews.map((review) => (
-          <motion.div
-            key={review._id}
-            whileHover={{ scale: 1.03 }}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden"
-          >
-            <img
-              src={review.photo}
-              alt={review.foodName}
-              className="h-48 w-full object-cover"
-            />
-            <div className="p-4 space-y-2">
-              <h3 className="text-xl font-semibold">{review.foodName}</h3>
-              <p className="text-sm text-gray-500">
-                {review.restaurantName} — {review.location}
-              </p>
-              <p className="text-sm text-gray-700">{review.reviewerName}</p>
-              <div className="flex gap-1">
-                <FaStar className="text-yellow-500 mt-1" />
-                <FaStar className="text-yellow-500 mt-1" />
-                <FaStar className="text-yellow-500 mt-1" />
-                <p className="text-yellow-500"> {review.rating}/5</p>
+      {reviews.length === 0 ? (
+        <p className="text-center text-gray-500 text-lg">No reviews yet 😔</p>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-8">
+          {reviews.map((review) => (
+            <motion.div
+              key={review._id}
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden"
+            >
+              <img
+                src={review.photo}
+                alt={review.foodName}
+                className="h-48 w-full object-cover"
+              />
+              <div className="p-5 space-y-2">
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {review.foodName}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {review.restaurantName} — {review.location}
+                </p>
+                <p className="text-sm text-gray-700 font-medium">
+                  By: {review.reviewerName}
+                </p>
+
+                {/*  Rating Section */}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar
+                      key={i}
+                      className={`mt-1 ${
+                        i < review.rating ? "text-yellow-500" : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                  <span className="text-yellow-600 font-semibold ml-1">
+                    {review.rating}/5
+                  </span>
+                </div>
+
+                {/*  Date */}
+                {review.date && (
+                  <p className="text-xs text-gray-400">
+                    Posted on: {new Date(review.date).toLocaleDateString()}
+                  </p>
+                )}
+
+                <button
+                  onClick={() => handleViewDetails(review._id)}
+                  className="inline-block mt-3 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition"
+                >
+                  View Details
+                </button>
               </div>
-              <button
-                onClick={() => handleViewDetails(review._id)}
-                className="inline-block mt-3 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
-              >
-                View Details
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
