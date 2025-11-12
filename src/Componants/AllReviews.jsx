@@ -22,7 +22,8 @@ const AllReviews = () => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-16">
+  <div className="pt-8">
+      <section className="max-w-7xl mx-auto px-4 py-16">
       <h2 className="text-3xl font-bold text-center mb-8 text-orange-600">
         All Reviews
       </h2>
@@ -88,6 +89,7 @@ const AllReviews = () => {
         </div>
       )}
     </section>
+  </div>
   );
 };
 

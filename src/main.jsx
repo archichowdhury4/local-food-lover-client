@@ -13,6 +13,7 @@ import ReviewDetails from './Componants/ReviewDetails';
 import AllReviews from './Componants/AllReviews';
 import Error404 from './Componants/Error404';
 import AddReview from './Componants/AddReviews';
+import AboutContact from './Componants/AboutContact';
 
 
 const router = createBrowserRouter([
@@ -48,7 +49,12 @@ const router = createBrowserRouter([
       {
         path: "add-review",
          Component: AddReview
-}
+      },
+      {
+       path: "about",
+       Component: AboutContact
+
+      }
 
     ]
   },
