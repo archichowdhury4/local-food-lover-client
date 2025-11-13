@@ -12,12 +12,12 @@ const Register = () => {
 
   const { createUser, updateUser, setUser, signInWithGoogle } = useContext(AuthContext);
 
-  // 🔹 Google Login
+  //  Google Login
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithGoogle();
       const user = result.user;
-      console.log("✅ Google Sign-in user:", user);
+      console.log(" Google Sign-in user:", user);
 
       const newUser = {
         name: user.displayName,
@@ -32,16 +32,16 @@ const Register = () => {
       });
 
       const data = await res.json();
-      console.log("✅ Google user saved to DB:", data);
+      console.log(" Google user saved to DB:", data);
       toast.success("Google login successful!");
       navigate("/");
     } catch (error) {
-      console.error("❌ Google Sign-in error:", error);
+      console.error(" Google Sign-in error:", error);
       toast.error("Google Sign-in failed!");
     }
   };
 
-  // 🔹 Manual Register
+  //  clicking button Register
   const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -51,7 +51,7 @@ const Register = () => {
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
 
-    console.log("🟢 Submitting Register form:", { name, email });
+    console.log(" Submitting Register form:", { name, email });
 
     // Validation
     if (name.length < 5) {

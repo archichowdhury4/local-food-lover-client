@@ -34,7 +34,7 @@ const Login = () => {
     try {
       const result = await signInUser(email, password);
       const user = result.user;
-      console.log("✅ Firebase login success:", user);
+      console.log(" Firebase login success:", user);
 
       // Save user to MongoDB
       const res = await fetch("http://localhost:3000/users", {
@@ -47,7 +47,7 @@ const Login = () => {
         }),
       });
       const data = await res.json();
-      console.log("✅ User saved to DB:", data);
+      console.log(" User saved to DB:", data);
 
       toast.success("Login successful!");
       navigate(location.state?.from || "/");
@@ -64,9 +64,9 @@ const Login = () => {
     try {
       const result = await signInWithGoogle();
       const user = result.user;
-      console.log("✅ Google login success:", user);
+      console.log(" Google login success:", user);
 
-      // Save user to MongoDB
+    
       const res = await fetch("http://localhost:3000/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ const Login = () => {
     }
   };
 
-  //  Toggle Password Visibility
+  //  Toggoling
   const handleTogglePasswordShow = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
