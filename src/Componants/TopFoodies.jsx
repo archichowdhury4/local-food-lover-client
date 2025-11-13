@@ -5,7 +5,7 @@ const TopFoodies = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // backend থেকে top foodies data fetch
+  
     fetch("http://localhost:3000/top-foodies")
       .then(res => res.json())
       .then(data => {
@@ -26,7 +26,7 @@ const TopFoodies = () => {
         Top Foodies
       </h2>
       {foodies.length === 0 ? (
-        <p className="text-center text-gray-500">No foodies found 😔</p>
+        <p className="text-center text-gray-500">No foodies found </p>
       ) : (
         <div className="grid md:grid-cols-3 gap-6">
           {foodies.map((user, index) => (

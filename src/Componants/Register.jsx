@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -8,42 +8,50 @@ const Register = () => {
   const [nameError, setNameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const { signInWithGoogle, createUser, setUser, updateUser } = useContext(AuthContext);
   const location = useLocation();
-  const { signInWithGoogle, createUser, setUser, updateUser } = use(AuthContext);
   const navigate = useNavigate();
 
- const handleGoogleSignIn = () => {
-        signInWithGoogle()
-            .then(result => {
-                console.log(result.user);
-                navigate(location?.state || '/')
-                const newUser = {
-                    name: result.user.displayName,
-                    email: result.user.email,
-                    image: result.user.photoURL
-                }
+  // Toggle password visibility
+  const handleTogglePasswordShow = (event) => {
+    event.preventDefault();
+    setShowPassword(!showPassword);
+  };
 
-                // create user in the database
-                fetch('http://localhost:3000/users',{
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify(newUser)
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('data after user save', data)
-                    })
+  // 🔹 Google Sign-In
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then(result => {
+        const user = result.user;
 
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }
+        // MongoDB তে save করা
+        fetch('http://localhost:3000/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: user.displayName || "",
+            email: user.email,
+            photo: user.photoURL || ""
+          })
+        })
+          .then(res => res.json())
+          .then(() => {
+            toast.success("Google login successful!");
+            navigate(location.state?.from || '/');
+          });
 
+      })
+      .catch(error => {
+        console.error(error);
+        toast.error("Google login failed!");
+      });
+  };
+
+  // 🔹 Email & Password Registration
   const handleRegister = (e) => {
     e.preventDefault();
+
     const form = e.target;
     const name = form.name.value;
     const photo = form.photo.value;
@@ -67,7 +75,7 @@ const Register = () => {
       return;
     }
 
-    // Confirm password match
+    // Confirm password check
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match!");
       toast.error("Passwords do not match!");
@@ -76,116 +84,107 @@ const Register = () => {
 
     setPasswordError("");
 
-    // Create user
-  createUser(email, password)
-    .then((result) => {
-      const user = result.user;
+    // 🔹 Firebase এ ইউজার তৈরি
+    createUser(email, password)
+      .then(result => {
+        const user = result.user;
 
-      // Update profile
-      updateUser({ displayName: name, photoURL: photo })
-        .then(() => {
-          setUser({ ...user, displayName: name, photoURL: photo });
-          navigate("/"); // ✅ শুধু Home page এ চলে যাবে
-        })
-        .catch((error) => {
-          console.log(error);
-          setUser(user);
-          toast("User created but profile not updated!");
-          navigate("/"); // ✅ যদি profile update fail হয় তবুও Home page এ যাবে
-        });
-    })
-    .catch((error) => {
-      console.log(error.code);
-      toast.error(error.code);
-    });
-};
+        // Firebase এ প্রোফাইল আপডেট
+        updateUser({ displayName: name, photoURL: photo })
+          .then(() => {
+            const newUser = { ...user, displayName: name, photoURL: photo };
+            setUser(newUser);
 
-  const handleTogglePasswordShow = (event) => {
-    event.preventDefault();
-    setShowPassword(!showPassword);
+            // 🔹 MongoDB তে ইউজার save করা
+            fetch('http://localhost:3000/users', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name,
+                email,
+                photo
+              })
+            })
+              .then(res => res.json())
+              .then(() => {
+                toast.success("Registration successful!");
+                navigate("/");
+              })
+              .catch(() => toast.error("Failed to save user in database!"));
+          })
+          .catch(err => {
+            console.error(err);
+            toast.warn("User created but profile not updated!");
+            navigate("/");
+          });
+      })
+      .catch(error => {
+        console.error(error.code);
+        toast.error(error.code);
+      });
   };
 
   return (
     <div>
       <div className="flex justify-center min-h-screen items-center">
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl py-5">
+        <div className="card bg-base-100 w-full max-w-sm shadow-2xl py-5">
           <h2 className="font-semibold text-3xl text-center">Register your account</h2>
-           <p className=" text-center pt-2">
-                Already Have An Account?{" "}
-                <Link to="/login" className="text-secondary">
-                  Login
-                </Link>
-              </p>
+          <p className="text-center pt-2">
+            Already Have An Account?{" "}
+            <Link to="/login" className="text-secondary">
+              Login
+            </Link>
+          </p>
 
+          {/* 🔹 Registration Form */}
           <form onSubmit={handleRegister} className="card-body">
-            <fieldset className="fieldset">
-              {/* Name */}
-              <label className="label">Your Name</label>
-              <input name="name" type="text" className="input" placeholder="Enter your name" required />
-              {nameError && <p className="text-xs text-error">{nameError}</p>}
+            <label className="label">Your Name</label>
+            <input name="name" type="text" className="input input-bordered" placeholder="Enter your name" required />
+            {nameError && <p className="text-xs text-error">{nameError}</p>}
 
-              {/* Photo */}
-              <label className="label">Photo URL</label>
-              <input name="photo" type="text" className="input" placeholder="Photo URL" required />
+            <label className="label">Photo URL</label>
+            <input name="photo" type="text" className="input input-bordered" placeholder="Photo URL" required />
 
-              {/* Email */}
-              <label className="label">Email</label>
-              <input name="email" type="email" className="input" placeholder="Enter your email address" required />
+            <label className="label">Email</label>
+            <input name="email" type="email" className="input input-bordered" placeholder="Enter your email" required />
 
-              {/* Password */}
-              <label className="label">Password</label>
-              <div className="relative">
-                <input
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  className="input"
-                  placeholder="Password"
-                  required
-                />
-                <button onClick={handleTogglePasswordShow} className="btn btn-xs absolute top-2 right-5">
-                  {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </button>
-              </div>
-
-              {/* Confirm Password */}
-              <label className="label">Confirm Password</label>
-              <div className="relative">
-                <input
-                  name="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  className="input"
-                  placeholder="Confirm Password"
-                  required
-                />
-                <button onClick={handleTogglePasswordShow} className="btn btn-xs absolute top-2 right-5">
-                  {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </button>
-                {passwordError && <p className="text-xs text-error">{passwordError}</p>}
-              </div>
-
-              <button type="submit" className="btn gradient-btn btn-neutral mt-4">
-                Register
+            <label className="label">Password</label>
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                className="input input-bordered w-full"
+                placeholder="Password"
+                required
+              />
+              <button onClick={handleTogglePasswordShow} className="btn btn-xs absolute top-2 right-3">
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
+            </div>
 
-              {/* Google */}
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="btn gradient-btn bg-white text-black border-[#e5e5e5]">
-                <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  <g>
-                    <path d="m0 0H512V512H0" fill="#fff"></path>
-                    <path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path>
-                    <path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path>
-                    <path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path>
-                    <path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path>
-                  </g>
-                </svg>
-                Login with Google
-              </button>
+            <label className="label">Confirm Password</label>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                type={showPassword ? 'text' : 'password'}
+                className="input input-bordered w-full"
+                placeholder="Confirm Password"
+                required
+              />
+            </div>
+            {passwordError && <p className="text-xs text-error">{passwordError}</p>}
 
-             
-            </fieldset>
+            {/* 🔹 Submit button */}
+            <button type="submit" className="btn gradient-btn btn-neutral mt-4 w-full">Register</button>
+
+            {/* 🔹 Google Sign-In button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="btn bg-white text-black border border-gray-300 mt-2 w-full flex items-center justify-center gap-2"
+            >
+              Google Sign-In
+            </button>
           </form>
         </div>
       </div>

@@ -48,6 +48,7 @@ const Navbar = () => {
     <div className="absolute right-0 hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 w-40">
       <Link to="/add-review" className="block px-4 py-2 hover:bg-orange-50">Add Review</Link>
       <Link to="/my-reviews" className="block px-4 py-2 hover:bg-orange-50">My Reviews</Link>
+      <Link to="/my-favorites" className="block px-4 py-2 hover:bg-orange-50">My Favorites</Link>
       <button
         onClick={handleSignOut}
         className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
@@ -103,6 +104,9 @@ const Navbar = () => {
     </Link>
     <Link to="/my-reviews" onClick={() => setMenuOpen(false)}>
        My Reviews
+    </Link>
+     <Link to="/my-favorites" onClick={() => setMenuOpen(false)}>
+       My Favorites
     </Link>
     <button
       onClick={() => {

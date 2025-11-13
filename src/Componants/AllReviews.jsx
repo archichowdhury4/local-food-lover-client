@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaHeart } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const AllReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("date"); 
+  const [sort, setSort] = useState("date");
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -22,8 +24,58 @@ const AllReviews = () => {
     if (user) navigate(`/reviews/${id}`);
     else navigate("/login");
   };
+const handleAddFavorite = async (review) => {
+  if (!user) {
+    navigate("/login");
+    return;
+  }
 
-  
+  const favoriteData = {
+    reviewId: review._id,
+    email: user.email,
+    foodName: review.foodName,
+    restaurantName: review.restaurantName,
+    location: review.location,
+    photo: review.photo,
+    rating: review.rating,
+    date: review.date,
+  };
+
+  try {
+    const res = await fetch("http://localhost:3000/favorites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(favoriteData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "Added to Favorites ",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      Swal.fire({
+        icon: "warning",
+        title: data.message || "Already in Favorites!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Failed to add favorite",
+      text: "Something went wrong!",
+    });
+  }
+};
+
+
   const filteredReviews = reviews
     .filter(
       (r) =>
@@ -44,7 +96,7 @@ const AllReviews = () => {
           All Reviews
         </h2>
 
-    
+        {/* Search + Sort */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <input
             type="text"
@@ -63,8 +115,9 @@ const AllReviews = () => {
           </select>
         </div>
 
+        {/* Review Cards */}
         {filteredReviews.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">No reviews found 😔</p>
+          <p className="text-center text-gray-500 text-lg">No reviews found </p>
         ) : (
           <div className="grid md:grid-cols-3 gap-8">
             {filteredReviews.map((review) => (
@@ -72,13 +125,23 @@ const AllReviews = () => {
                 key={review._id}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden relative"
               >
                 <img
                   src={review.photo}
                   alt={review.foodName}
                   className="h-48 w-full object-cover"
                 />
+
+                {/* Favorite Heart */}
+                <button
+                  onClick={() => handleAddFavorite(review)}
+                  className="absolute top-3 right-3 text-gray-300 hover:text-red-500 text-2xl transition"
+                  title="Add to Favorites"
+                >
+                  <FaHeart />
+                </button>
+
                 <div className="p-5 space-y-2">
                   <h3 className="text-xl font-semibold text-gray-800">
                     {review.foodName}
@@ -90,7 +153,7 @@ const AllReviews = () => {
                     By: {review.reviewerName}
                   </p>
 
-                  {/* Rating Section */}
+                  {/* Rating */}
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                       <FaStar
