@@ -3,8 +3,10 @@ import { AuthContext } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import DocumentTitle from "./DocumentTitle";
 
 const MyFavorites = () => {
+  DocumentTitle('Myfavorites | MyWeb');
   const { user } = useContext(AuthContext);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);

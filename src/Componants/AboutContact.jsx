@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import DocumentTitle from "./DocumentTitle";
 
 const AboutContact = () => {
+  DocumentTitle('About | MyWeb');
   return (
     <section className="max-w-6xl mx-auto px-6 py-16">
       

@@ -3,8 +3,10 @@ import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
+import DocumentTitle from "./DocumentTitle";
 
 const AddReview = () => {
+  DocumentTitle('Addreview | MyWeb');
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -42,12 +44,12 @@ const AddReview = () => {
       const data = await res.json();
       if (data.insertedId) {
         Swal.fire({
-  position: "top-end",
-  icon: "success",
-  title: "Your form has been submitted",
-  showConfirmButton: false,
-  timer: 1500
-});
+        position: "top-end",
+        icon: "success",
+        title: "Your form has been submitted",
+        showConfirmButton: false,
+        timer: 1500
+        });
         form.reset();
         navigate("/my-reviews");
       } else {

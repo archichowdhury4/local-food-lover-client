@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import DocumentTitle from "./DocumentTitle";
 
 const TopFoodies = () => {
+  DocumentTitle('Topfoodies | MyWeb');
   const [foodies, setFoodies] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +23,8 @@ const TopFoodies = () => {
   if (loading) return <p className="text-center mt-10">Loading top foodies...</p>;
 
   return (
-    <section className="max-w-6xl mx-auto py-10 px-4">
+  <div className="pt-10">
+      <section className="max-w-6xl mx-auto py-10 px-4">
       <h2 className="text-3xl font-bold text-center mb-8 text-orange-600">
         Top Foodies
       </h2>
@@ -43,6 +46,7 @@ const TopFoodies = () => {
         </div>
       )}
     </section>
+  </div>
   );
 };
 

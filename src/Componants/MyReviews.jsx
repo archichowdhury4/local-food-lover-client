@@ -2,8 +2,10 @@ import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import DocumentTitle from "./DocumentTitle";
 
 const MyReviews = () => {
+  DocumentTitle('Myreview | MyWeb');
   const { user } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
   const [showModal, setShowModal] = useState(false);

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
+import DocumentTitle from "./DocumentTitle";
 
 const ReviewDetails = () => {
+  DocumentTitle('ReviewDetails | MyWeb');
   const { id } = useParams();
   const [review, setReview] = useState(null);
 

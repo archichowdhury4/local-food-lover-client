@@ -1,57 +1,49 @@
-import React, { useState, useContext } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
-import { toast, ToastContainer } from 'react-toastify';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { AuthContext } from '../context/AuthContext';
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router";
+import { toast, ToastContainer } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [nameError, setNameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const { signInWithGoogle, createUser, setUser, updateUser } = useContext(AuthContext);
-  const location = useLocation();
   const navigate = useNavigate();
 
-  // Toggle password visibility
-  const handleTogglePasswordShow = (event) => {
-    event.preventDefault();
-    setShowPassword(!showPassword);
-  };
+  const { createUser, updateUser, setUser, signInWithGoogle } = useContext(AuthContext);
 
-  // 🔹 Google Sign-In
-  const handleGoogleSignIn = () => {
-    signInWithGoogle()
-      .then(result => {
-        const user = result.user;
+  // 🔹 Google Login
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user;
+      console.log("✅ Google Sign-in user:", user);
 
-        // MongoDB তে save করা
-        fetch('http://localhost:3000/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: user.displayName || "",
-            email: user.email,
-            photo: user.photoURL || ""
-          })
-        })
-          .then(res => res.json())
-          .then(() => {
-            toast.success("Google login successful!");
-            navigate(location.state?.from || '/');
-          });
+      const newUser = {
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL,
+      };
 
-      })
-      .catch(error => {
-        console.error(error);
-        toast.error("Google login failed!");
+      const res = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(newUser),
       });
+
+      const data = await res.json();
+      console.log("✅ Google user saved to DB:", data);
+      toast.success("Google login successful!");
+      navigate("/");
+    } catch (error) {
+      console.error("❌ Google Sign-in error:", error);
+      toast.error("Google Sign-in failed!");
+    }
   };
 
-  // 🔹 Email & Password Registration
-  const handleRegister = (e) => {
+  // 🔹 Manual Register
+  const handleRegister = async (e) => {
     e.preventDefault();
-
     const form = e.target;
     const name = form.name.value;
     const photo = form.photo.value;
@@ -59,105 +51,85 @@ const Register = () => {
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
 
-    // Name validation
+    console.log("🟢 Submitting Register form:", { name, email });
+
+    // Validation
     if (name.length < 5) {
-      setNameError("Name should be more than 5 characters");
+      setNameError("Name must be at least 5 characters");
       return;
-    } else {
-      setNameError("");
-    }
+    } else setNameError("");
 
-    // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError("Password must have at least 6 characters, including uppercase & lowercase letters.");
-      toast.error("Invalid password format!");
-      return;
-    }
-
-    // Confirm password check
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match!");
-      toast.error("Passwords do not match!");
       return;
     }
 
-    setPasswordError("");
+    const regex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+    if (!regex.test(password)) {
+      setPasswordError("Password must have uppercase & lowercase letters.");
+      return;
+    } else setPasswordError("");
 
-    // 🔹 Firebase এ ইউজার তৈরি
-    createUser(email, password)
-      .then(result => {
-        const user = result.user;
+    try {
+      console.log(" Creating Firebase user...");
+      const result = await createUser(email, password);
+      console.log(" Firebase user created:", result.user);
 
-        // Firebase এ প্রোফাইল আপডেট
-        updateUser({ displayName: name, photoURL: photo })
-          .then(() => {
-            const newUser = { ...user, displayName: name, photoURL: photo };
-            setUser(newUser);
+      await updateUser({ displayName: name, photoURL: photo });
+      console.log("Profile updated");
 
-            // 🔹 MongoDB তে ইউজার save করা
-            fetch('http://localhost:3000/users', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name,
-                email,
-                photo
-              })
-            })
-              .then(res => res.json())
-              .then(() => {
-                toast.success("Registration successful!");
-                navigate("/");
-              })
-              .catch(() => toast.error("Failed to save user in database!"));
-          })
-          .catch(err => {
-            console.error(err);
-            toast.warn("User created but profile not updated!");
-            navigate("/");
-          });
-      })
-      .catch(error => {
-        console.error(error.code);
-        toast.error(error.code);
+      const newUser = { name, email, image: photo };
+      console.log(" Sending to MongoDB:", newUser);
+
+      const res = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(newUser),
       });
+
+      const data = await res.json();
+      console.log(" MongoDB response:", data);
+
+      setUser({ ...result.user, displayName: name, photoURL: photo });
+      toast.success("Account created successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error(" Error during register:", err);
+      toast.error(err.code || "Registration failed");
+    }
   };
 
   return (
-    <div>
-      <div className="flex justify-center min-h-screen items-center">
-        <div className="card bg-base-100 w-full max-w-sm shadow-2xl py-5">
-          <h2 className="font-semibold text-3xl text-center">Register your account</h2>
-          <p className="text-center pt-2">
-            Already Have An Account?{" "}
-            <Link to="/login" className="text-secondary">
-              Login
-            </Link>
-          </p>
+    <div className="flex justify-center min-h-screen items-center">
+      <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl py-5">
+        <h2 className="font-semibold text-2xl text-center">Register your account</h2>
 
-          {/* 🔹 Registration Form */}
-          <form onSubmit={handleRegister} className="card-body">
+        <form onSubmit={handleRegister} className="card-body">
+          <fieldset className="fieldset">
             <label className="label">Your Name</label>
-            <input name="name" type="text" className="input input-bordered" placeholder="Enter your name" required />
+            <input name="name" type="text" className="input" placeholder="Enter your name" required />
             {nameError && <p className="text-xs text-error">{nameError}</p>}
 
             <label className="label">Photo URL</label>
-            <input name="photo" type="text" className="input input-bordered" placeholder="Photo URL" required />
+            <input name="photo" type="text" className="input" placeholder="Photo URL" />
 
             <label className="label">Email</label>
-            <input name="email" type="email" className="input input-bordered" placeholder="Enter your email" required />
+            <input name="email" type="email" className="input" placeholder="Enter your email" required />
 
             <label className="label">Password</label>
             <div className="relative">
               <input
                 name="password"
-                type={showPassword ? 'text' : 'password'}
-                className="input input-bordered w-full"
+                type={showPassword ? "text" : "password"}
+                className="input"
                 placeholder="Password"
                 required
               />
-              <button onClick={handleTogglePasswordShow} className="btn btn-xs absolute top-2 right-3">
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="btn btn-xs absolute top-2 right-5"
+              >
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
@@ -166,27 +138,35 @@ const Register = () => {
             <div className="relative">
               <input
                 name="confirmPassword"
-                type={showPassword ? 'text' : 'password'}
-                className="input input-bordered w-full"
+                type={showPassword ? "text" : "password"}
+                className="input"
                 placeholder="Confirm Password"
                 required
               />
             </div>
+
             {passwordError && <p className="text-xs text-error">{passwordError}</p>}
 
-            {/* 🔹 Submit button */}
-            <button type="submit" className="btn gradient-btn btn-neutral mt-4 w-full">Register</button>
+            <button type="submit" className="btn gradient-btn btn-neutral mt-4">
+              Register
+            </button>
 
-            {/* 🔹 Google Sign-In button */}
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="btn bg-white text-black border border-gray-300 mt-2 w-full flex items-center justify-center gap-2"
+              className="btn gradient-btn bg-white text-black border-[#e5e5e5]"
             >
-              Google Sign-In
+              Continue with Google
             </button>
-          </form>
-        </div>
+
+            <p className="font-semibold text-center pt-5">
+              Already have an account?{" "}
+              <Link to="/login" className="text-secondary">
+                Login
+              </Link>
+            </p>
+          </fieldset>
+        </form>
       </div>
       <ToastContainer position="top-center" />
     </div>

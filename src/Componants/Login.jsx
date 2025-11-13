@@ -8,18 +8,18 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const emailRef = useRef();
-  const { signIn, signInWithGoogle } = useContext(AuthContext);
+  const { signInUser, signInWithGoogle } = useContext(AuthContext); // corrected names
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Login with Email & Password
-  const handleLogin = (e) => {
+  //  Email & Password Login
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
 
     const form = e.target;
-    const email = form.email.value;
-    const password = form.password.value;
+    const email = form.email.value.trim();
+    const password = form.password.value.trim();
 
     // Password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
@@ -31,70 +31,73 @@ const Login = () => {
       return;
     }
 
-    signIn(email, password)
-      .then((result) => {
-        const user = result.user;
+    try {
+      const result = await signInUser(email, password);
+      const user = result.user;
+      console.log("✅ Firebase login success:", user);
 
-        
-        fetch("http://localhost:3000/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: user.displayName || "",
-            email: user.email,
-            photo: user.photoURL || "",
-          }),
-        });
-
-        toast.success("Login successful!");
-        navigate(location.state?.from || "/");
-      })
-      .catch((error) => {
-        console.log(error.code);
-        setError("Login failed. Please check your credentials.");
-        toast.error("Login failed. Please check your credentials.");
+      // Save user to MongoDB
+      const res = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: user.displayName || "",
+          email: user.email,
+          photo: user.photoURL || "",
+        }),
       });
+      const data = await res.json();
+      console.log("✅ User saved to DB:", data);
+
+      toast.success("Login successful!");
+      navigate(location.state?.from || "/");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.");
+    }
   };
 
-  
-  const handleGoogleSignIn = () => {
-    setError(""); 
-    signInWithGoogle()
-      .then((result) => {
-        const user = result.user;
+  //  Google Login
+  const handleGoogleSignIn = async () => {
+    setError("");
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user;
+      console.log("✅ Google login success:", user);
 
-        
-        fetch("http://localhost:3000/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: user.displayName || "",
-            email: user.email,
-            photo: user.photoURL || "",
-          }),
-        });
-
-        toast.success("Google login successful!");
-        navigate(location.state?.from || "/");
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Google login failed!");
+      // Save user to MongoDB
+      const res = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: user.displayName || "",
+          email: user.email,
+          photo: user.photoURL || "",
+        }),
       });
+      const data = await res.json();
+      console.log(" Google user saved to DB:", data);
+
+      toast.success("Google login successful!");
+      navigate(location.state?.from || "/");
+    } catch (err) {
+      console.error(" Google login error:", err);
+      toast.error("Google login failed!");
+    }
   };
 
-  
-  const handleTogglePasswordShow = (event) => {
-    event.preventDefault();
+  //  Toggle Password Visibility
+  const handleTogglePasswordShow = (e) => {
+    e.preventDefault();
     setShowPassword(!showPassword);
   };
 
   return (
     <div className="flex justify-center min-h-screen items-center">
       <div className="card bg-base-100 w-full max-w-sm shadow-2xl py-5">
-        <h2 className="font-semibold text-2xl text-center">
-          Login Your Account
-        </h2>
+        <h2 className="font-semibold text-2xl text-center">Login Your Account</h2>
+
         <form onSubmit={handleLogin} className="card-body">
           {/* Email */}
           <label className="label">Email</label>
@@ -118,6 +121,7 @@ const Login = () => {
               required
             />
             <button
+              type="button"
               onClick={handleTogglePasswordShow}
               className="btn btn-xs absolute top-2 right-5"
             >
@@ -125,10 +129,8 @@ const Login = () => {
             </button>
           </div>
 
-          
           {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
 
-          
           <button
             type="submit"
             className="btn gradient-btn btn-neutral mt-4 w-full"
@@ -136,7 +138,7 @@ const Login = () => {
             Login
           </button>
 
-          {/* Google Sign-in */}
+          {/* Google Login */}
           <button
             type="button"
             onClick={handleGoogleSignIn}

@@ -5,8 +5,10 @@ import { FaStar, FaHeart } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import DocumentTitle from "./DocumentTitle";
 
 const AllReviews = () => {
+  DocumentTitle('AllReviews | MyWeb');
   const [reviews, setReviews] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("date");
@@ -96,7 +98,7 @@ const handleAddFavorite = async (review) => {
           All Reviews
         </h2>
 
-        {/* Search + Sort */}
+    
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <input
             type="text"
